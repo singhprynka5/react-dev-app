@@ -5,7 +5,7 @@ class User extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userInfo: {}
+            userInfo: null
         }
     }
 
@@ -19,14 +19,14 @@ class User extends Component {
 
     render() {
         const { userInfo } = this.state;
-        return (
-            <div className="user-card">
-                <img className="avatar" src={userInfo?.avatar_url} />
-                <h2>Name: {userInfo?.name}</h2>
-                <h3>Location: {userInfo?.location}</h3>
-                <h4>Contact: {userInfo?.login}</h4>
+        return userInfo !== null ? (
+            <div className="m-4 p-4 bg-gray-50 rounded-lg">
+                <img className="w-[100px]" src={userInfo?.avatar_url} />
+                <h2 className="mt-5 font-medium">Name: {userInfo?.name}</h2>
+                <h3 className="font-medium">Location: {userInfo?.location}</h3>
+                <h4 className="font-medium">Contact: {userInfo?.login}</h4>
             </div>
-        )
+        ) : null
     }
 }
 
