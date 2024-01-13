@@ -8,28 +8,28 @@ import Contact from "./components/Contact";
 import Error from "./components/Error";
 import Shimmer from "./components/Shimmer";
 import RestaurantMenu from "./components/RestaurantMenu";
-const Grocery = lazy(()=>import("./components/Grocery"));
+const Grocery = lazy(() => import("./components/Grocery"));
 import UserContext from "./utils/UserContext";
 
 const AppLayout = () => {
-  const [userName, setUserName ] = useState("");
+  const [userName, setUserName] = useState("");
 
-  useEffect(()=> {
+  useEffect(() => {
     const data = {
-      name: "Priyanka Singh"
-    }
+      name: "Priyanka Singh",
+    };
     setUserName(data.name);
-  },[])
+  }, []);
 
-    return (
-      <UserContext.Provider value={{ loggedInUser: userName, setUserName }}>
-        <div className="app">
-            <Header />
-            <Outlet />
-        </div>
-      </UserContext.Provider>
-    )
-}
+  return (
+    <UserContext.Provider value={{ loggedInUser: userName, setUserName }}>
+      <div className="app">
+        <Header />
+        <Outlet />
+      </div>
+    </UserContext.Provider>
+  );
+};
 
 const appRouter = createBrowserRouter([
   {
@@ -38,28 +38,32 @@ const appRouter = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Body />
+        element: <Body />,
       },
       {
         path: "/about",
-        element: <About />
+        element: <About />,
       },
       {
         path: "/contact",
-        element: <Contact />
+        element: <Contact />,
       },
       {
         path: "/grocery",
-        element: <Suspense fallback={<Shimmer />}><Grocery /></Suspense>
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <Grocery />
+          </Suspense>
+        ),
       },
       {
         path: "/restaurant/:resId",
-        element: <RestaurantMenu />
-      }
+        element: <RestaurantMenu />,
+      },
     ],
-    errorElement: <Error />
-  }
-])
+    errorElement: <Error />,
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<RouterProvider router={appRouter} />);

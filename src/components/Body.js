@@ -9,69 +9,104 @@ import UserContext from "../utils/UserContext";
 const PromotedRestaurantCard = withPromotedLabel(RestaurantCard);
 
 const Body = () => {
-    const [ listOfRestaurant, setListOfRestaurant ] = useState([]);
-    const [ fiteredRestaurant, setFiteredRestaurant ] = useState([]);
-    const [ searchText, setSearchText ] = useState("");
+  const [listOfRestaurant, setListOfRestaurant] = useState([]);
+  const [fiteredRestaurant, setFiteredRestaurant] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-    useEffect(() => {
-        fetchData();
-    }, [])
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    fetchData = async () => {
-        let data = await fetch(RESTAURANT_LIST_API_URL);
-        const json = await data.json();
-        const resList = json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants;
-        setListOfRestaurant(resList);
-        setFiteredRestaurant(resList);
-    }
+  fetchData = async () => {
+    let data = await fetch(RESTAURANT_LIST_API_URL);
+    const json = await data.json();
+    const resList =
+      json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
+        ?.restaurants;
+    setListOfRestaurant(resList);
+    setFiteredRestaurant(resList);
+  };
 
-    const onlineStatus = useOnlineStatus();
+  const onlineStatus = useOnlineStatus();
 
-    if (!onlineStatus) {
-        return <h1>It seems you're offline. Please check your internet connection!!!</h1>
-    }
-
-    const { loggedInUser, setUserName } = useContext(UserContext);
+  if (!onlineStatus) {
     return (
-        <div>
-            <div className="flex">
-                <div className="m-4 p-4">
-                    <input type="text" className="border border-solid border-black"
-                        value={searchText}
-                        onChange={(evt)=> setSearchText(evt.target.value)}
-                    />
-                    <button className="px-4 py-2 bg-green-100 m-4 rounded-lg" onClick={()=> {
-                         let fiteredRestaurant = listOfRestaurant.filter(restaurant => restaurant?.info?.name.toLowerCase().includes(searchText.toLowerCase())
-                            || restaurant?.data?.name.toLowerCase().includes(searchText.toLowerCase()));
-                            setFiteredRestaurant(fiteredRestaurant);
-                    }}>Search</button>
-                </div>
-                <div className="m-4 p-4 flex items-center">
-                    <button className="px-4 py-2 bg-gray-100 rounded-lg" onClick={() => {
-                        const filteredList = listOfRestaurant.filter(res => res?.data?.avgRating > 4.4 || res?.info?.avgRating > 4.4);
-                        setFiteredRestaurant(filteredList);
-                    }}>Top Rated Restaurants</button>
-                </div>
-                <div className="m-4 p-4 flex items-center">
-                    <label>User Name:</label>
-                    <input
-                        className="border border-black p-2 ml-2"
-                        value={loggedInUser}
-                        onChange={(evt) => setUserName(evt.target.value)}
-                    />
-                </div>
-            </div>
-            {listOfRestaurant.length === 0 ? <Shimmer /> :
-                <div className="flex flex-wrap">
-                    {fiteredRestaurant.map(restaurant => (
-                        <Link to={`/restaurant/${restaurant?.info?.id}`} key={restaurant?.info?.id}>
-                            {restaurant?.info?.avgRating > 4.2 ? <PromotedRestaurantCard resData={restaurant} /> : <RestaurantCard resData={restaurant} />}
-                        </Link>
-                    ))}
-                </div>
-            }
+      <h1>It seems you're offline. Please check your internet connection!!!</h1>
+    );
+  }
+
+  const { loggedInUser, setUserName } = useContext(UserContext);
+  return (
+    <div>
+      <div className="flex">
+        <div className="m-4 p-4">
+          <input
+            type="text"
+            className="border border-solid border-black"
+            value={searchText}
+            onChange={(evt) => setSearchText(evt.target.value)}
+          />
+          <button
+            className="px-4 py-2 bg-green-100 m-4 rounded-lg"
+            onClick={() => {
+              let fiteredRestaurant = listOfRestaurant.filter(
+                (restaurant) =>
+                  restaurant?.info?.name
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) ||
+                  restaurant?.data?.name
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase())
+              );
+              setFiteredRestaurant(fiteredRestaurant);
+            }}
+          >
+            Search
+          </button>
         </div>
-    )
-}
+        <div className="m-4 p-4 flex items-center">
+          <button
+            className="px-4 py-2 bg-gray-100 rounded-lg"
+            onClick={() => {
+              const filteredList = listOfRestaurant.filter(
+                (res) =>
+                  res?.data?.avgRating > 4.4 || res?.info?.avgRating > 4.4
+              );
+              setFiteredRestaurant(filteredList);
+            }}
+          >
+            Top Rated Restaurants
+          </button>
+        </div>
+        <div className="m-4 p-4 flex items-center">
+          <label>User Name:</label>
+          <input
+            className="border border-black p-2 ml-2"
+            value={loggedInUser}
+            onChange={(evt) => setUserName(evt.target.value)}
+          />
+        </div>
+      </div>
+      {listOfRestaurant.length === 0 ? (
+        <Shimmer />
+      ) : (
+        <div className="flex flex-wrap">
+          {fiteredRestaurant.map((restaurant) => (
+            <Link
+              to={`/restaurant/${restaurant?.info?.id}`}
+              key={restaurant?.info?.id}
+            >
+              {restaurant?.info?.avgRating > 4.2 ? (
+                <PromotedRestaurantCard resData={restaurant} />
+              ) : (
+                <RestaurantCard resData={restaurant} />
+              )}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default Body;
